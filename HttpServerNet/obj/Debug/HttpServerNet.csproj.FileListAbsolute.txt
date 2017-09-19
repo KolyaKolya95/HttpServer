@@ -1,0 +1,7 @@
+E:\MyPrograms\C#\HttpServerNet\HttpServerNet\bin\Debug\HttpServerNet.exe.config
+E:\MyPrograms\C#\HttpServerNet\HttpServerNet\bin\Debug\HttpServerNet.exe
+E:\MyPrograms\C#\HttpServerNet\HttpServerNet\bin\Debug\HttpServerNet.pdb
+E:\MyPrograms\C#\HttpServerNet\HttpServerNet\obj\Debug\HttpServerNet.csprojResolveAssemblyReference.cache
+E:\MyPrograms\C#\HttpServerNet\HttpServerNet\obj\Debug\HttpServerNet.csproj.CoreCompileInputs.cache
+E:\MyPrograms\C#\HttpServerNet\HttpServerNet\obj\Debug\HttpServerNet.exe
+E:\MyPrograms\C#\HttpServerNet\HttpServerNet\obj\Debug\HttpServerNet.pdb
