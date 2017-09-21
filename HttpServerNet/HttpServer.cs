@@ -14,10 +14,9 @@ namespace HttpServerNet
     public class HttpServer
     {
         public const String MSG_DIR = "/root/msg/";
-        public const String WEB_DIR = "root/web/";
+        public const String WEB_DIR = "/root/web/";
         public const String VERSION = "HTTP/1.1";
         public const String NAME = "NICKNAME HTTP Server v0.1";
-
 
         private bool running = false;
 

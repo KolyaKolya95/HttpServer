@@ -23,24 +23,49 @@ namespace HttpServerNet
 
         public static Response From(Request request)
         {
-            if (request == null)
-                return MakeNullRequest();
-
-            if (request.Type == "GET")
+            while (true)
             {
-                String file = Environment.CurrentDirectory + HttpServer.WEB_DIR + request.URL;
-                if (File.Exists(file))
+                if (request == null)
+                    return MakeNullRequest();
+
+
+                if (request.Type == "GET")
                 {
-                    return null;
+                    String file = Environment.CurrentDirectory + HttpServer.WEB_DIR + request.URL;
+                    FileInfo f = new FileInfo(file);
+                    if (f.Exists && f.Extension.Contains("."))
+                    {
+                        return MakeFromFile(f);
+                    }
+                    else
+                    {
+                        DirectoryInfo directory = new DirectoryInfo(f + "/");
+                        if (!directory.Exists)
+                            return MakeNotFound();
+                        FileInfo[] files = directory.GetFiles();
+                        foreach (FileInfo ff in files)
+                        {
+                            String n = ff.Name;
+                            if (n.Contains("default.html") || n.Contains("default.html") || n.Contains("index.html") || n.Contains("index.html"))
+                                return MakeFromFile(ff);
+                        }
+                    }
                 }
                 else
-                {
-                    return null;
-                }
-            }
-            else
-                return MakeMathodNotAllowed();
+                    return MakeMathodNotAllowed();
 
+                return MakeMathodNotAllowed();
+            }
+        }
+
+        private static Response MakeFromFile(FileInfo f)
+        {
+            FileStream fileStream = f.OpenRead();
+            BinaryReader reader = new BinaryReader(fileStream);
+            Byte[] d = new Byte[fileStream.Length];
+            reader.Read(d, 0, d.Length);
+            fileStream.Close();
+            return new Response("200 ok", "text/html", d);
         }
 
         private static Response MakeNullRequest()
@@ -51,9 +76,8 @@ namespace HttpServerNet
             BinaryReader reader = new BinaryReader(fileStream);
             Byte[] d = new Byte[fileStream.Length];
             reader.Read(d, 0, d.Length);
-
-
-            return new Response("400 bad request", "html/text", d);
+            fileStream.Close();
+            return new Response("400 bad request", "text/html", d);
         }
 
         private static Response MakeMathodNotAllowed()
@@ -63,10 +87,11 @@ namespace HttpServerNet
             FileStream fileStream = fileInfo.OpenRead();
             BinaryReader reader = new BinaryReader(fileStream);
             Byte[] d = new Byte[fileStream.Length];
+            fileStream.Close();
             reader.Read(d, 0, d.Length);
 
-
-            return new Response("405 bad request", "html/text", d);
+ 
+            return new Response("405 bad request", "text/html", d);
         }
 
         private static Response MakeNotFound()
@@ -78,16 +103,19 @@ namespace HttpServerNet
             Byte[] d = new Byte[fileStream.Length];
             reader.Read(d, 0, d.Length);
 
-
-            return new Response("404 page not found", "html/text", d);
+            fileStream.Close();
+            return new Response("404 page not found", "text/html", d);
         }
 
         public void Post(NetworkStream stream)
         {
-            StreamWriter writer = new StreamWriter(stream);
-            writer.WriteLine(String.Format("{0} {1}\r\nServer: {2}\r\nContent-Type: {3}\r\nAccept-Range: bytes\r\nContetn-Length: {4}\r\n",
-                 HttpServer.VERSION, status, HttpServer.NAME, mime));
-            stream.Write(data, 0, data.Length);
+            
+                StreamWriter writer = new StreamWriter(stream);
+                writer.WriteLine(String.Format("{0} {1}\r\nServer: {2}\r\nContent-Type: {3}\r\nAccept-Ranges: bytes\r\nContetn-Length: {4}\r\n",
+                HttpServer.VERSION, status, HttpServer.NAME, mime, data.Length));
+                writer.Flush();
+                stream.Write(data, 0, data.Length);
+           
         }
     }
 }
